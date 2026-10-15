@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#0b1220"><title>Cloud Task Placement | Interactive Network Demo</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header class="topbar"><div class="brand"><span class="brand-mark">CT</span><span><b>Cloud Task Placement</b><small>DAA project · Interactive simulator</small></span></div><div class="top-actions"><span class="sample-pill"><i></i> Sample data · runs locally</span><button id="resetBtn" class="button quiet">Reset sample</button><button id="runBtn" class="button primary">Run simulation <span>▶</span></button></div></header>
+  <main>
+    <section class="intro"><div><p class="eyebrow">NETWORK PLACEMENT LAB</p><h1>Where should the task run?</h1><p>Change server capacity, task demand, and link latency. Run the algorithms and inspect how the network and placement decision respond.</p></div><div class="intro-note"><span class="pulse"></span><span><b>Interactive prototype</b><small>Illustrative values, not live cloud measurements</small></span></div></section>
+    <div class="workspace">
+      <aside class="controls card">
+        <div class="panel-title"><div><span class="step-tag">01 · INPUTS</span><h2>Scenario controls</h2></div><button id="addNodeBtn" class="button small">+ Server</button></div>
+        <label class="demand-control">Task demand <span>workload units</span><input id="demandInput" type="number" min="1" max="999" value="12"></label>
+        <div class="subsection-head"><div><h3>Servers</h3><p>Capacity available at each location</p></div><span id="serverCount" class="counter"></span></div>
+        <div id="nodeEditor" class="node-editor"></div>
+        <div class="subsection-head links-heading"><div><h3>Network links</h3><p>Undirected latency · milliseconds</p></div><button id="addEdgeBtn" class="text-button">+ Add link</button></div>
+        <details class="link-details"><summary>Edit link values <span id="linkCount"></span><span class="chevron">⌄</span></summary><div id="edgeEditor" class="edge-editor"></div></details>
+        <p id="inputMessage" class="message" role="status">Edit any value, then run the simulation.</p>
+        <button id="runBtnSide" class="button primary full">Run simulation <span>▶</span></button>
+      </aside>
+      <section class="results">
+        <div class="summary-grid">
+          <article class="metric card"><span class="metric-label">MST backbone</span><strong id="mstMetric">—</strong><small>Minimum total link latency</small></article>
+          <article class="metric card"><span class="metric-label">Task demand</span><strong id="demandMetric">—</strong><small>Workload units requested</small></article>
+          <article class="metric card"><span class="metric-label">Capacity selected</span><strong id="capacityMetric">—</strong><small>Combined selected capacity</small></article>
+          <article class="metric card accent"><span class="metric-label">Placement score</span><strong id="costMetric">—</strong><small>Mean-distance proxy · ms</small></article>
+        </div>
+        <article class="card network-card"><div class="card-heading"><div><span class="step-tag">02 · NETWORK</span><h2>Server graph</h2><p>Click a source and destination below to highlight the Dijkstra route.</p></div><div class="graph-key"><span id="demoStep" class="demo-step" aria-live="polite">Ready to simulate</span><div class="legend"><span><i class="legend-line"></i>Network link</span><span><i class="legend-line tree"></i>MST</span><span><i class="legend-node"></i>Selected server</span></div></div></div><div id="graph" class="graph phase-done"></div><div class="route-controls"><label>From <select id="sourceSelect"></select></label><span class="route-arrow">→</span><label>To <select id="targetSelect"></select></label><div id="routeResult" class="route-result">Run simulation to calculate routes.</div></div></article>
+        <div class="lower-grid"><article class="card placement-card"><div class="card-heading"><div><span class="step-tag">03 · PLACEMENT</span><h2>Capacity-aware decision</h2><p id="placementSummary">Run the simulation to calculate a feasible placement.</p></div></div><div id="placements" class="placement-list"></div><div class="explain"><b>How to read this</b><p>The DP selects a subset with enough combined capacity and the lowest sum of average shortest-path distances. It is a simplified placement score, not a live performance prediction.</p></div></article></div>
+        <details class="matrix-details card"><summary><span><span class="step-tag">04 · SHORTEST PATHS</span><b>View full latency matrix</b><small>Dijkstra distances between every server pair</small></span><span id="routeStatus" class="status">Awaiting run</span><span class="chevron">⌄</span></summary><div class="table-wrap"><table id="distTable"></table></div></details>
+        <details class="method card"><summary><span><span class="step-tag">METHOD NOTES</span><b>What the algorithms are doing</b></span><span class="chevron">⌄</span></summary><div class="method-content"><p><b>Kruskal MST:</b> sorts links by latency and adds a link when it joins separate components, producing a minimum-weight connected backbone.</p><p><b>Dijkstra:</b> computes shortest-path latency between every pair of servers using all network links. MST links do not restrict these routes.</p><p><b>0/1 dynamic programming:</b> considers each server once and finds the minimum scoring combination whose capacity meets demand.</p><p class="scope-note">Prototype limits: sample data only; no connection to cloud servers; capacities are aggregated rather than assigning individual requests; equal weighting across regions; assumes non-negative undirected link latencies.</p></div></details>
+      </section>
+    </div>
+    <footer><span>Design & Analysis of Algorithms · Project Based Learning</span><span>Educational prototype · no live cloud connection</span></footer>
+  </main><script src="app.js"></script>
+</body></html>
